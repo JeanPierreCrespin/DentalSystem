@@ -5,7 +5,7 @@ Se desea implementar un sistema que permita administrar la reserva de turnos par
 ![Badge en Desarollo](https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green)
 
 ## Diagrama UML
-![UML](https://raw.githubusercontent.com/JeanPierreCrespin/DentalSystem/developer/system/uml/denta-system-uml.png)
+![UML](https://raw.githubusercontent.com/JeanPierreCrespin/DentalSystem/developer/system/uml/dental-system-uml.png)
 
 ## Tecnologías utilizadas
 
