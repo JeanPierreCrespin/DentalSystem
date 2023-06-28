@@ -29,13 +29,16 @@ public class OdontologoService {
     }
 
     public Odontologo modificar(Odontologo odontologo){
-        return odontologoRepository.save(odontologo.toBuilder()
+        Odontologo odontologoR = buscarPorId(odontologo.id).toBuilder()
                 .nombre(odontologo.nombre)
                 .apellido(odontologo.apellido)
                 .direccion(odontologo.direccion)
-                .build());
+                .build();
+        return odontologoRepository.save(odontologoR);
     }
     public Odontologo buscarPorId(String id) throws OdontologoException {
+        if(id == null || id.isEmpty())
+            throw new OdontologoException("El id Odontologo no puede ser vacio o null");
         return odontologoRepository.buscarOdontoloPorIdEstado(id).orElseThrow(() ->  new OdontologoException("No existe Odontologo para el ID: "+id));
     }
 

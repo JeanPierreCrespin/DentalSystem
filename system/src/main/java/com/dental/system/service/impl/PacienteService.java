@@ -25,16 +25,19 @@ public class PacienteService {
     }
 
     public Paciente modificar(Paciente paciente){
-        return pacienteRepository.save((paciente.toBuilder()
+        Paciente pacienteR = buscarPorId(paciente.id).toBuilder()
                 .nombre(paciente.nombre)
                 .apellido(paciente.apellido)
                 .fechaAlta(paciente.fechaAlta)
                 .dni(paciente.dni)
                 .direccion(paciente.direccion)
-                .build()));
+                .build();
+        return pacienteRepository.save(pacienteR);
     }
 
     public Paciente buscarPorId(String id) throws PacienteException {
+        if(id == null || id.isEmpty())
+            throw  new PacienteException("El id Paciente no puede ser vacio o null ");
         return pacienteRepository.findById(id).orElseThrow(() ->  new PacienteException("No existe paciente con el ID: "+id));
     }
 
