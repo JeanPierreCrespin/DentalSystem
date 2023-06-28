@@ -26,6 +26,7 @@ public class Paciente{
     public String apellido;
     public String dni;
     public Date fechaAlta;
+    public Boolean estado;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "paciente_id")

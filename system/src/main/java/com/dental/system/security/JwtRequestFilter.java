@@ -1,4 +1,4 @@
-package com.dental.system.jwt;
+package com.dental.system.security;
 
 import com.dental.system.util.JwtUtil;
 import javax.servlet.*;
@@ -29,7 +29,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Override
-
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
@@ -38,10 +37,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username= null;
 
         String jwt = null;
+        try{
+            if(authorizationHeader != null &&  authorizationHeader.startsWith("Bearer")) {
+                jwt = authorizationHeader.substring(7);
+                username = jwtUtil.extractUserName(jwt);
+            }
+        }catch (Exception e){
 
-        if(authorizationHeader != null &&  authorizationHeader.startsWith("Bearer")) {
-            jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUserName(jwt);
         }
 
 

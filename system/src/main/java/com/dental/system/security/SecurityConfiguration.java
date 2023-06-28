@@ -1,4 +1,4 @@
-package com.dental.system.jwt;
+package com.dental.system.security;
 
 import com.dental.system.service.impl.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private CustomADEHandler customADEHandler;
+
+    @Autowired
+    private CustomRHandler customRHandler;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -37,9 +42,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers("/bienvenido.html","/authenticate", "/login.html", "/styles/**", "/assets/**", "/scripts/**", "/signup.html", "/usuario/**")
+                .antMatchers("/usuario/**")
                 .permitAll().anyRequest().authenticated()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .and()
+                .exceptionHandling().accessDeniedHandler(customADEHandler)
+                .and()
+                .logout()
+                .addLogoutHandler(customRHandler);
       http.addFilterAfter( jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     }

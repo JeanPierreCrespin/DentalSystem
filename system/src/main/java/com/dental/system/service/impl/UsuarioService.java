@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UsuarioService{
     @Autowired
@@ -30,17 +32,19 @@ public class UsuarioService{
 
     public AuthenticationResponse guardar(Usuario usuario) throws UsuarioException {
         validarUsernamePassword(usuario);
+        if(usuarioRepository.existsByUsername(usuario.username))
+            throw  new UsuarioException("El username ya existe.");
 
         usuario.password = passwordEncoder.encode(usuario.password);
         Usuario user = usuarioRepository.save(usuario);
-        return new AuthenticationResponse(jwtUtil.generateToken(authenticationService.loadUserByUsername(user.username)));
+        return new AuthenticationResponse(jwtUtil.generateToken(authenticationService.loadUserByUsername(user.username)), "Bearer","ROLE_"+user.rol.toString());
     }
 
     private void validarUsernamePassword(Usuario usuario) throws UsuarioException {
-        if(usuario.username.isEmpty() || usuario.username.length() <= 0)
+        if(usuario.username == null || usuario.username.isEmpty())
             throw  new UsuarioException("El username no puede ser nulo o vacio.");
 
-        if(usuario.password.isEmpty() || usuario.password.length() <= 0)
+        if(usuario.password == null || usuario.password.isEmpty())
             throw  new UsuarioException("Debe ingresar una contraseña.");
     }
 
@@ -51,16 +55,14 @@ public class UsuarioService{
                 .build()
         );
 
-       // Usuario usuario1 = usuarioRepository.getUserByUsername(usuario.username).orElseThrow(()-> new UsuarioException("No existe usuario con el username: "+ usuario.username));
-
         UserDetails userDetails = authenticationService.loadUserByUsername(authenticationRequest.username);
         if(userDetails == null)
-            new UsuarioException("No se encontro ningun usuario asociado al uaername:  "+authenticationRequest.username);
+            throw  new UsuarioException("Username incorrecto.");
 
         if(!passwordEncoder.matches(authenticationRequest.password, userDetails.getPassword()))
-            new UsuarioException("Contrseña incorrecta");
+           throw  new UsuarioException("Contrseña incorrecta.");
 
-        return new AuthenticationResponse(jwtUtil.generateToken(userDetails));
+        return new AuthenticationResponse(jwtUtil.generateToken(userDetails),"Bearer",userDetails.getAuthorities().toArray()[0].toString());
     }
 
 }

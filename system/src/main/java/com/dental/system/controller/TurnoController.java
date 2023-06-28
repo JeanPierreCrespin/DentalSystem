@@ -24,13 +24,13 @@ public class TurnoController {
     }
 
     @PutMapping("/editar")
-    public ResponseEntity<Turno> editar(@PathVariable("id") String id){
-        return null;
+    public ResponseEntity<Turno> editar(@RequestBody Turno turno) throws PacienteException, OdontologoException {
+        return new ResponseEntity<>(turnoService.modificar(turno), HttpStatus.OK);
     }
 
-    @GetMapping("/:id")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<Turno> buscarPorId(@PathVariable("id") String id){
-        return  null;
+        return  new ResponseEntity<>(turnoService.buscarPorId(id), HttpStatus.OK);
     }
 
     @GetMapping("/todos")
@@ -40,7 +40,8 @@ public class TurnoController {
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable("id") String id){
-        return  null;
+        turnoService.eliminar(id);
+        return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

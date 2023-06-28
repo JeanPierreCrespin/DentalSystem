@@ -2,6 +2,7 @@ package com.dental.system.service.impl;
 
 import com.dental.system.enums.Rol;
 import com.dental.system.entities.Usuario;
+import com.dental.system.exception.UsuarioException;
 import com.dental.system.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +31,7 @@ public class AuthenticationService implements UserDetailsService {
 
             UsernameNotFoundException {
 
-        Optional<Usuario> user = usuarioRepository.getUserByUsername(userName);
+        Usuario user = usuarioRepository.getUserByUsername(userName).orElseThrow( ()-> new UsuarioException("Username incorrecto."));
 
 
 
@@ -42,7 +43,7 @@ public class AuthenticationService implements UserDetailsService {
 
         //for (String rol : user.get().roles) {
 
-            autorizacion = new SimpleGrantedAuthority("ROLE_" +user.get().rol.toString());
+            autorizacion = new SimpleGrantedAuthority("ROLE_" +user.rol.toString());
 
             autorizaciones.add(autorizacion);
 
@@ -50,7 +51,7 @@ public class AuthenticationService implements UserDetailsService {
 
         org.springframework.security.core.userdetails.User userDetail = new
 
-                org.springframework.security.core.userdetails.User( user.get().username, user.get().password,
+                org.springframework.security.core.userdetails.User( user.username, user.password,
 
                 true, true, true,true,
 

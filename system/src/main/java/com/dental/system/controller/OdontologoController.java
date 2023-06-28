@@ -21,12 +21,12 @@ public class OdontologoController {
 
     @PutMapping("/editar")
     public ResponseEntity<Odontologo> editar(@RequestBody Odontologo odontologo){
-        return new ResponseEntity<>(odontologoService.modificar(odontologo), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(odontologoService.modificar(odontologo), HttpStatus.OK);
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<Odontologo> buscarPorId(@PathVariable("id") String id) throws OdontologoException {
-        return  new ResponseEntity<>(odontologoService.budcarPorId(id), HttpStatus.OK);
+        return  new ResponseEntity<>(odontologoService.buscarPorId(id), HttpStatus.OK);
     }
 
     @GetMapping("/todos")

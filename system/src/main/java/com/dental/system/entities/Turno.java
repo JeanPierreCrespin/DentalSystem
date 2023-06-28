@@ -24,6 +24,7 @@ public class Turno {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     public  String id;
     public LocalDateTime fechaYHora;
+    public Boolean estado;
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
     public Paciente paciente;

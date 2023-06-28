@@ -25,6 +25,7 @@ public class Odontologo {
     public String matricula;
     public String nombre;
     public String apellido;
+    public Boolean estado;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "odontologo_id")

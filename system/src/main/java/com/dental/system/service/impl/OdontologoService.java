@@ -20,9 +20,11 @@ public class OdontologoService {
     private DireccionService direccionService;
 
     public Odontologo guardar(Odontologo odontologo){
+        odontologo.estado = true;
         Optional<Odontologo> odontologoOptional = odontologoRepository.findByMatricula(odontologo.matricula);
         if(odontologoOptional.isPresent())
-            new OdontologoException("Conflicto: Ya existe un odontologo con ese ID: "+odontologo.id);
+            throw new OdontologoException("Conflicto: Ya existe un odontologo con la Matricola: "+odontologo.matricula);
+
         return odontologoRepository.save(odontologo);
     }
 
@@ -33,16 +35,20 @@ public class OdontologoService {
                 .direccion(odontologo.direccion)
                 .build());
     }
-    public Odontologo budcarPorId(String id) throws OdontologoException {
-        //orElseThrow(() ->  new OdontologoException("No existe Odontologo para el ID: "+id));
-        return odontologoRepository.findById(id).get();
+    public Odontologo buscarPorId(String id) throws OdontologoException {
+        return odontologoRepository.buscarOdontoloPorIdEstado(id).orElseThrow(() ->  new OdontologoException("No existe Odontologo para el ID: "+id));
     }
 
     public List<Odontologo> buscarTodos(){
-        return odontologoRepository.findAll();
+        return odontologoRepository.listar();
     }
     public void eliminarPorId(String id){
-        odontologoRepository.deleteById(id);
+       Optional<Odontologo> odontologoOp = odontologoRepository.buscarOdontoloConTurnoActivo(id);
+       if(odontologoOp.isPresent())
+           throw new OdontologoException("No se puede eliminar el odontologo con el ID: "+id+" porque tiene un turno activo asociado.");
+        Odontologo odontologo = odontologoOp.get();
+        odontologo.estado = false;
+        odontologoRepository.save(odontologo);
     }
 
     public boolean exiteOdotologo( String id){

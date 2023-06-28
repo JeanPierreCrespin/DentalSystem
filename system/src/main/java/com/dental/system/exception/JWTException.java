@@ -4,8 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class OdontologoException extends RuntimeException{
-    public OdontologoException(String message) {
+public class JWTException extends  RuntimeException{
+    public JWTException(String message) {
         super(message);
     }
 }
+
