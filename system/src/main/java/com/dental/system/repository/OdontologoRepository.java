@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface OdontologoRepository extends JpaRepository<Odontologo, String> {
 
-    @Query("select o from Odontologo o where o.matricula =:matricula")
+    @Query("select o from Odontologo o where o.matricula =:matricula and o.estado = true")
     public Optional<Odontologo> findByMatricula(String matricula);
 
     @Query("select o from Odontologo o where o.id =:id and o.estado = true")

@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface PacienteRepository  extends JpaRepository<Paciente, String> {
+    @Query("select p from Paciente p where p.estado = true and p.dni =:dni")
     public Optional<Paciente> findByDni(String dni);
     @Query("select p from Paciente p join p.turnos t where t.estado =  true and p.id =:id")
     public Optional<Paciente> buscarPacienteConTurnoActivo(String id);

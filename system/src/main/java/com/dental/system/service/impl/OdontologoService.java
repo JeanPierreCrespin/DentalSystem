@@ -20,15 +20,28 @@ public class OdontologoService {
     private DireccionService direccionService;
 
     public Odontologo guardar(Odontologo odontologo){
+
+        validarNombreApellidoMatricula(odontologo);
+
         odontologo.estado = true;
         Optional<Odontologo> odontologoOptional = odontologoRepository.findByMatricula(odontologo.matricula);
         if(odontologoOptional.isPresent())
-            throw new OdontologoException("Conflicto: Ya existe un odontologo con la Matricola: "+odontologo.matricula);
+            throw new OdontologoException("Conflicto: Ya existe un odontologo con la Matricola: "+odontologo.matricula+".");
 
         return odontologoRepository.save(odontologo);
     }
 
+    private void validarNombreApellidoMatricula(Odontologo odontologo) {
+        if(odontologo.nombre == null || odontologo.nombre.isEmpty())
+            throw new OdontologoException("El nombre del odontologo no puede ser null o vacio.");
+        if(odontologo.apellido == null || odontologo.apellido.isEmpty())
+            throw new OdontologoException("El apellido del odontologo no puede ser null o vacio.");
+        if(odontologo.matricula == null || odontologo.matricula.isEmpty())
+            throw new OdontologoException("La matricula del odontologo no puede ser null o vacio.");
+    }
+
     public Odontologo modificar(Odontologo odontologo){
+        validarNombreApellidoMatricula(odontologo);
         Odontologo odontologoR = buscarPorId(odontologo.id).toBuilder()
                 .nombre(odontologo.nombre)
                 .apellido(odontologo.apellido)
@@ -38,8 +51,8 @@ public class OdontologoService {
     }
     public Odontologo buscarPorId(String id) throws OdontologoException {
         if(id == null || id.isEmpty())
-            throw new OdontologoException("El id Odontologo no puede ser vacio o null");
-        return odontologoRepository.buscarOdontoloPorIdEstado(id).orElseThrow(() ->  new OdontologoException("No existe Odontologo para el ID: "+id));
+            throw new OdontologoException("El id Odontologo no puede ser vacio o null.");
+        return odontologoRepository.buscarOdontoloPorIdEstado(id).orElseThrow(() ->  new OdontologoException("No existe Odontologo para el ID: "+id+"."));
     }
 
     public List<Odontologo> buscarTodos(){
@@ -49,7 +62,7 @@ public class OdontologoService {
        Optional<Odontologo> odontologoOp = odontologoRepository.buscarOdontoloConTurnoActivo(id);
        if(odontologoOp.isPresent())
            throw new OdontologoException("No se puede eliminar el odontologo con el ID: "+id+" porque tiene un turno activo asociado.");
-        Odontologo odontologo = odontologoOp.get();
+        Odontologo odontologo = buscarPorId(id);
         odontologo.estado = false;
         odontologoRepository.save(odontologo);
     }

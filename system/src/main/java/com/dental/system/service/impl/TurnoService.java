@@ -36,11 +36,11 @@ public class TurnoService {
 
         Optional<Turno> turnoOdontologoPacienteOptional = turnoRepository.findByFechaYHoraAndOdontologoAndPaciente(turno.fechaYHora, odontologo,paciente);
         if(turnoOdontologoPacienteOptional.isPresent())
-            throw new TurnoException("Ya hay un turn o cargado para la fecha: "+turno.fechaYHora+" y Odontologo: "+ odontologo.nombre+ "con Matricula: "+odontologo.matricula+" y Paciente: "+paciente.nombre+ " "+paciente.apellido);
+            throw new TurnoException("Ya hay un turno cargado para la fecha: "+turno.fechaYHora.toLocalDate()+" "+turno.fechaYHora.toLocalTime()+" y Odontologo: "+ odontologo.nombre+ " con Matricula: "+odontologo.matricula+" y Paciente: "+paciente.nombre+ " "+paciente.apellido+".");
         Optional<Turno> turnoOptional = turnoRepository.findByFechaYHoraAndAndOdontologo(turno.fechaYHora, odontologo);
 
         if(turnoOptional.isPresent())
-            throw new TurnoException("El odontologo ya tiene un turno asignado a la misma hora y fecha ");
+            throw new TurnoException("El odontologo ya tiene un turno asignado a la misma hora y fecha.");
         turno.odontologo = odontologo;
         turno.paciente = paciente;
         turno.estado = true;
@@ -49,20 +49,22 @@ public class TurnoService {
 
     private  void validarOdontologoPacienteFechaHora(Turno turno) {
         if(turno.fechaYHora.isBefore(LocalDateTime.now()))
-            throw new TurnoException("La fecha y hora incorecta");
+            throw new TurnoException("La fecha y hora incorecta.");
 
         if(turno.odontologo == null || turno.odontologo.id.isEmpty() || !odontologoService.exiteOdotologo(turno.odontologo.id) )
-            throw new TurnoException("Se debe selecionar un odontologo");
+            throw new TurnoException("Se debe selecionar un odontologo.");
 
 
         if(turno.paciente == null || turno.paciente.id.isEmpty() || !pacienteService.existePaciente(turno.paciente.id))
-            throw new TurnoException("Se debe selecionar un paciente");
+            throw new TurnoException("Se debe selecionar un paciente.");
     }
 
     public Turno modificar(Turno turno) throws OdontologoException, PacienteException {
-        if(!existeTurno(turno.id)){
-            throw new TurnoException("El turno con el Id: "+turno.id+" no existe");
-        }
+        if(turno.id == null || turno.id.isEmpty() )
+            throw new TurnoException("El Id turno no puede estar vacio o null.");
+        if(!existeTurno(turno.id))
+            throw new TurnoException("El turno con el Id: "+turno.id+" no existe.");
+
         validarOdontologoPacienteFechaHora(turno);
 
         Odontologo odontologo = odontologoService.buscarPorId(turno.odontologo.id);
@@ -76,7 +78,7 @@ public class TurnoService {
         return turnoRepository.save(turnoR);
     }
 ;    public Turno buscarPorId(String id){
-        return turnoRepository.buscarTurnoPorId(id).orElseThrow( () -> new TurnoException("No se encontro turno para el ID: "+id));
+        return turnoRepository.buscarTurnoPorId(id).orElseThrow( () -> new TurnoException("No se encontro turno para el ID: "+id+"."));
     }
 
     public List<Turno> listarTurnos(){
